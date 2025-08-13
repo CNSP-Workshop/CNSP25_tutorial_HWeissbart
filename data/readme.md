@@ -1,6 +1,7 @@
 ## Dataset
 
-> ⚠️ All data are directly downloaded via the notebook tutorial, so you do not _have to_ do it yourself
+> ⚠️ All data are directly downloaded via the notebook tutorial, so you do not _have to_ do it yourself.
+> However, if you were to worry about your internet connection being slow, you can go and download it in advance.
 
 Besides simulated data we will be using MEG data recorded at the Donders Institute (REF). Those data were recorded while participant were simply asked to listen to speech audiobook from which we will extract relevant features (both acoustic and linguistic).
 
@@ -9,7 +10,7 @@ Besides simulated data we will be using MEG data recorded at the Donders Institu
 The MEG data supplied consist of one sample participant (sub-019 in original dataset). The data have been preprocessed, low pass filtered and downsampled at 200Hz. ICA was run beforehand in order to identify eye components which have been removed.
 The stimulus channel in the data contains the id of the story which is started at a given sample. The information about which audio corresponds to which id is described in the stimulus section.
 
-The data can be directly downloaded from [OSF](https://osf.io/gsvbd/). Again, a reminder that you do not _have to_ download anything as this will be covered **within the tutorial notebook**.
+The data can be directly downloaded from [OSF](https://osf.io/gsvbd/files/osfstorage). Again, a reminder that you do not _have to_ download anything as this will be covered **within the tutorial notebook**. If you want to do it yourself (for instance so that you have it prepared beforehand in case of slow internet connections), make sure you place all files under `data/sub-001/`.
 
 > Note that more subjects are available directly from the paper's [Figshare dataset](https://doi.org/10.6084/m9.figshare.24236512.v1)
 
