@@ -1,6 +1,8 @@
 # Bridging Complexity in Neural Dynamics
 
-This repository contains resources and instructions to be used for the tutorial of the CNSP 2025 workshop presented by H. Weissbart (on the 2nd of Spectember at 6.30pm IST).
+This repository contains resources and instructions to be used for the tutorial of the CNSP 2025 workshop presented by H. Weissbart (on the 2nd of September at 6.30pm IST).
+
+> ⚠️ The repository acts as a placeholder mostly for now, correct setup instructions and tutorial files **TBC**
 
 ## Objectives
 
@@ -25,6 +27,8 @@ There are both data and notebooks accessible here, either directly or via simple
 - `utils`: a collection of modules and scripts that are sometimes used in the tutorial notebooks
 
 ## Setup
+
+> IMPORTANT: The `requirements.txt` and `environment.yaml` files are placeholder only for now, correct setup instructions and files TBC
 
 We will be using python >3.10*, to keep a modern version.
 You can start with a fresh environment if you like, using either `requirements.txt` via `pip` or the `environment.yaml` via `conda` or `mamba`:
