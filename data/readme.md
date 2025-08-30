@@ -16,13 +16,15 @@ The data can be directly downloaded from [OSF](https://osf.io/gsvbd/files/). Aga
 
 ### Stimulus
 
-The `stim` folder contains data relative to the stimulus, in particular it consists of several time series corresponding to the following features:
+The `stim` folder, after download from the tutorial notebook, will contain data relative to the stimulus, in particular it consists of several time series corresponding to the following features:
 
 * envelope
 * word surprisal
 * word entropy
 * syntactic depth
 * syntactic "close"
+
+The feature signals for all stories are also directly downloadable from [OSF](https://osf.io/download/68b30b694a508e9c4ac61f2c/), they are contained in a single HDF5 file.
 
 ### Reference
 

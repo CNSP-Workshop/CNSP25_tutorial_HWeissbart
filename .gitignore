@@ -30,3 +30,5 @@ MANIFEST
 
 # MEG data
 data/sub-001/*fif
+# Stim data
+data/**/*hdf5
