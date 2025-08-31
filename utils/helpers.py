@@ -31,7 +31,7 @@ def highpass_filter(data, cutoff, fs, order=4):
     filtered_data = filtfilt(b, a, data)
     return filtered_data
 
-def convolve_with_kernel(data, kernel, tmin, tmax, fs):
+def convolve_with_kernel(data, kernel, tmin, tmax, fs) -> NDArray:
     # Convolve data with the given kernel
     pre = int(np.abs(tmin) * fs)
     post = int(np.abs(tmax) * fs)
@@ -146,19 +146,6 @@ def lag_matrix(x, lags=(0,1), mode='full', fill_value=0., **kwargs):
     else:
         raise ValueError("mode must be 'valid' or 'full'")
 
-def svd_trf_estimation(X, y, alpha=0.0, nkeep=None, var_exp=0.99):
-    # Perform SVD-based TRF estimation
-    XtX = X.T @ X
-    U, S, Vt = svd(XtX)
-    beta = U.T @ (X.T @ y)
-    if nkeep is None:
-        cumulative_variance = np.cumsum(S) / np.sum(S)
-        nkeep = np.searchsorted(cumulative_variance, var_exp) + 1
-    S_inv = np.zeros_like(S)
-    S_inv[:nkeep] = 1 / (S[:nkeep] + alpha * np.mean(S[:nkeep]))
-    beta_svd = Vt.T @ (S_inv * (U.T @ (X.T @ y)))
-    return beta_svd, beta
-
 def conjugate_gradient_solver(A, b, ridge=0.0):
     # Solve for x in the ridge regression problem using a conjugate gradient solver
     n_features = A.shape[1]
@@ -169,6 +156,48 @@ def conjugate_gradient_solver(A, b, ridge=0.0):
     if info != 0:
         print("Warning: Conjugate gradient solver did not converge.")
     return x
+
+def svd_solver(X: NDArray, Y: NDArray, alpha: float=0.0, var_explained=None) -> NDArray:
+    """SVD-based solver for ridge regression.
+
+    This function is here for educational purposes, prefer using `_svd_regress` instead.
+
+    Parameters
+    ----------
+    X : ndarray (nsamples, nfeats)
+        Design matrix
+    Y : ndarray (nsamples, nchans)
+        Response matrix
+    alpha : float
+        Regularization parameter
+
+    Returns
+    -------
+    betas : ndarray (nfeats, nchans)
+        Coefficients
+
+    """
+    # Compute SVD of X, this is the most expensive step
+    # U, s, Vt = svd(X, full_matrices=False)
+    # S_inv = np.diag(s / (s**2 + alpha))
+    # betas = Vt.T @ S_inv @ U.T @ Y
+
+    # Instead, one can compute the SVD of X.T @ X which is smaller if nsamples > nfeats
+    # but this is less stable numerically
+    XtX = X.T @ X
+    U, s, Vt = svd(XtX, full_matrices=False)
+    # Regularization in the SVD space, removing components according to var_explained if given
+    if var_explained is not None:
+        s = s[s.cumsum() / s.sum() < var_explained]
+        U = U[:, :len(s)]
+        Vt = Vt[:len(s), :]
+        S_inv = np.diag(1/s)
+    # Regularization in the SVD space but keeping all components and shrinking them
+    # according to ridge parameter alpha
+    else:
+        S_inv = np.diag(1 / (s + alpha))
+    betas = U @ S_inv @ U.T @ X.T @ Y
+    return betas
 
 def _svd_regress(x: Union[np.ndarray, List[np.ndarray]],
                  y: Union[np.ndarray, List[np.ndarray]],

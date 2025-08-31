@@ -2,7 +2,7 @@ import numpy as np
 from scipy.fft import rfft, rfftfreq
 import matplotlib.pyplot as plt
 
-def plot_fft(signal, sampling_rate, ax=None, scale='amplitude'):
+def plot_fft(signal, fs, ax=None, scale='amplitude'):
     """
     Plot the FFT of a signal.
 
@@ -12,7 +12,7 @@ def plot_fft(signal, sampling_rate, ax=None, scale='amplitude'):
         fig, ax = plt.subplots(figsize=(8, 4))
     N = len(signal)
     yf = rfft(signal)
-    xf = rfftfreq(N, 1 / sampling_rate)
+    xf = rfftfreq(N, 1 / fs)
     amp = np.abs(yf)
     if scale in ['dB', 'db']:
         amp = 20 * np.log10(amp)
@@ -22,7 +22,7 @@ def plot_fft(signal, sampling_rate, ax=None, scale='amplitude'):
         ylabel = 'Power (dB)'
     elif scale in ['psd', 'power']:
         amp[0] /= 2
-        amp = (2.0/N) * amp**2 / sampling_rate # with normalization
+        amp = (2.0/N) * amp**2 / fs # with normalization
         ylabel = 'Power/Frequency (V**2/Hz)'
     else:
         amp = (2.0/N) * amp 

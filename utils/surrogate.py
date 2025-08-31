@@ -2,9 +2,9 @@ import numpy as np
 from scipy.signal.windows import hann, gaussian
 from scipy.signal import lfilter, butter, filtfilt
 
-def simulate_background_eeg(alpha:float=0.7, duration: float=30., fs: int=100) -> np.ndarray:
+def simulate_background_eeg(alpha:float=0.9, duration: float=30., fs: int=100) -> np.ndarray:
     '''
-    AR coefficient to start approximating 1/f over a range: alpha ~ 0.7 - 1.5
+    AR coefficient to start approximating 1/f over a range: alpha ~ 0.7 - 1.
     '''
     n_samples = int(duration * fs)
     background_eeg = np.zeros(n_samples)
@@ -16,7 +16,7 @@ def simulate_background_eeg(alpha:float=0.7, duration: float=30., fs: int=100) -
 
     return background_eeg
 
-def simulate_band_power(sampling_rate: int, duration: float, f_center: float, bandwidth: float) -> np.ndarray:
+def simulate_band_power(sampling_rate: int=100, duration: float=30., f_center: float=10., bandwidth: float=2.) -> np.ndarray:
     N = int(sampling_rate * duration)
     # Generate white noise
     white_noise = np.random.normal(0, 1, N)
@@ -28,22 +28,41 @@ def simulate_band_power(sampling_rate: int, duration: float, f_center: float, ba
     random_signal = np.fft.ifft(filtered_spectrum).real
     return random_signal
 
-def simulate_spike_events(n_samples: int, event_interval: int, spike_value: float = 1.0) -> np.ndarray:
-    events = np.zeros(n_samples)
-    events[::event_interval] = spike_value
-    return events
-
-def poisson_onsets_fixed_N(N, dur=1.0, seed=None):
-    """Generate Poisson onsets with a fixed number of events.
-    Instead of generating a Poisson process with a fixed rate, we generate a fixed number of events.
-
-    Uniformly distribute them over [0,dur], which matches the order statistics of the Poisson process.
-
-    .. seealso::
-        :func:`poisson_onsets`, :func:`poisson_onsets_fixed_N`
+def simulate_random_events(duration=30, fs=100, rate=1, seed=None) -> np.ndarray:
+    """Simulate spike events as a binary array with spikes occurring at a specified rate.
+    
+    Rate is in Hz, duration in seconds, fs is the sampling frequency in Hz.
+    Rate is an average rate, the actual number of spikes will vary due to the Poisson process.
     """
     rng = np.random.default_rng(seed)
-    return np.sort(rng.uniform(0, dur, size=N))
+    n_samples = int(duration * fs)
+    expected_n_spikes = int(rate * duration)
+    spike_times = np.sort(rng.uniform(0, duration, size=expected_n_spikes))
+    spike_indices = (spike_times * fs).astype(int)
+    spike_indices = spike_indices[spike_indices < n_samples]  # Ensure indices are within bounds
+    spikes = np.zeros(n_samples)
+    spikes[spike_indices] = 1
+    return spikes
+
+def simulate_regular_events(duration=30, fs=100, interval=1, jitter=0.05, seed=None) -> np.ndarray:
+    """Simulate spike events occurring at regular intervals with optional jitter.
+    
+    Interval is in seconds, duration in seconds, fs is the sampling frequency in Hz.
+    Jitter is the maximum deviation from the regular interval in seconds.
+    """
+    rng = np.random.default_rng(seed)
+    n_samples = int(duration * fs)
+    n_intervals = int(duration / interval)
+    spike_times = np.arange(0, n_intervals * interval, interval)
+    if jitter > 0:
+        jitter_values = rng.uniform(-jitter, jitter, size=spike_times.shape)
+        spike_times += jitter_values
+    spike_times = spike_times[(spike_times >= 0) & (spike_times < duration)]
+    spike_indices = (spike_times * fs).astype(int)
+    spikes = np.zeros(n_samples)
+    spikes[spike_indices] = 1
+    return spikes
+
 
 def simulate_smooth_signal(n_samples: int, sample_rate: int, low_pass_freq: float = 12.0) -> np.ndarray:
     # Generate white noise
@@ -53,16 +72,13 @@ def simulate_smooth_signal(n_samples: int, sample_rate: int, low_pass_freq: floa
     smooth_signal = filtfilt(b, a, noise)
     return smooth_signal
 
-def create_kernel(loc_peak: float = 0.1, spread: float = 0.05,
-                  tmin: float = -0.1, tmax: float = 0.6,
+def create_kernel(loc: float = 0.1, spread: float = 0.05,
+                  tmin: float = -0.2, tmax: float = 0.6,
                   sample_rate: int =100, bipolar: bool = False, normalise: bool=True) -> np.ndarray:
     t_kernel = np.arange(tmin, tmax, 1/sample_rate)
-    kernel = np.exp(-0.5 * ((t_kernel - loc_peak) / spread) ** 2)
-    
-    # Optional: create a bipolar kernel by differentiating the single peak kernel
+    kernel = np.exp(-0.5 * ((t_kernel - loc) / spread) ** 2)
     if bipolar:
         kernel = np.gradient(kernel)
-    
     if normalise:
         kernel /= np.sum(np.abs(kernel)**2)**0.5  # L2 norm
     return t_kernel, kernel
@@ -89,7 +105,7 @@ if __name__ == "__main__":
 
     # Example usage for event signals:
     event_interval = 100  # Event every 100 samples
-    spike_events = simulate_spike_events(n_samples, event_interval)
+    spike_events = simulate_regular_events(n_samples, event_interval)
     smooth_signal = simulate_smooth_signal(n_samples, sample_rate)
     kernel = create_kernel()
     convolved_events = np.convolve(spike_events, kernel, mode='same')
