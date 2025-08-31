@@ -2,4 +2,7 @@ numpy
 scipy
 matplotlib
 jupyter
+ipywidgets
+ipympl
 natmeeg
+h5py

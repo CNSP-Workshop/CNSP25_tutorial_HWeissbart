@@ -2,7 +2,7 @@
 
 This repository contains resources and instructions to be used for the tutorial of the CNSP 2025 workshop presented by H. Weissbart (on the 2nd of September at 6.30pm IST).
 
-> ⚠️ The repository acts as a placeholder mostly for now, correct setup instructions and tutorial files **TBC**
+> ⚠️ Tutorial files **TBC** ... in construction
 
 ## Objectives
 
@@ -28,16 +28,23 @@ There are both data and notebooks accessible here, either directly or via simple
 
 ## Setup
 
-> IMPORTANT: The `requirements.txt` and `environment.yaml` files are placeholder only for now, correct setup instructions and files TBC
+### Mamba/Conda documentation
 
-We will be using python >3.10*, to keep a modern version.
+For those new to package management in Python, Conda is an open-source platform that simplifies package installation and environment management. For a comprehensive beginner’s guide on how to get started with Conda, explore the [official Conda documentation](https://docs.conda.io/projects/conda/en/latest/user-guide/getting-started.html).
+
+If you are looking for a faster alternative to Conda, Mamba is an excellent choice that provides quick environment management and package installations. You can learn how to efficiently use Mamba by checking out the [Mamba documentation](https://mamba.readthedocs.io/en/latest/).
+
+### Install env or requirements
+
+We will be using python >3.10*, to keep a modern (maintained) version. Note that the tutorial itself was written/tested using Python 3.12.10.
+
 You can start with a fresh environment if you like, using either `requirements.txt` via `pip` or the `environment.yaml` via `conda` or `mamba`:
 
 - Using `pip`:
   ```bash
   # If installing in a new environment:
-  mamba create -n myenv python>=3.10 pip # or conda/venv/etc.
-  mamba activate myenv # or conda/venv etc.
+  mamba create -n myenv python>=3.10 pip 
+  mamba activate myenv
   # You can go straight to `pip install` if installing in an existing env:
   pip install -r requirements.txt
   ```
