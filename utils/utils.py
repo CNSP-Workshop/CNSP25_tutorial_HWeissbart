@@ -124,8 +124,8 @@ def get_feature_signal(feats=['acoustic', 'wordonsets'],
         'kl', 'PE', 'depth', 'close', 'open']
     stories : list of str
         Which stories to extract
-    normalise : str
-        'all' or 'story'. Whether to normalise per story or across all stories jointly.
+    normalise : None | str
+        None, 'all' or 'story'. Whether to normalise per story or across all stories jointly or not at all.
 
     Returns
     -------
@@ -133,13 +133,13 @@ def get_feature_signal(feats=['acoustic', 'wordonsets'],
     """
     import numpy as np
     wl_feats_id = {f:k for f,k in zip(
-        ['acoustic', 'wordonsets', 'surprisal', 'entropy',
+        ['wordonsets', 'surprisal', 'entropy',
         'kl', 'PE', 'wordfrequency', 'depth', 'close', 'open'], range(9)
         )
     }
     srate=100
     transcripts='transcripts_v2'
-    assert normalise in ['all', 'story'], "Normalisation must per story ('story') or across all stories ('all')"
+    assert normalise in ['all', 'story', None], "Normalisation must per story ('story') or across all stories ('all')"
     if verbose: print("Load stimulus features")
     envs = read_h5_data(feat_type='acoustic', stories=stories)
     wordlevels = read_h5_data(feat_type='wordlevel', stories=stories)
@@ -153,13 +153,14 @@ def get_feature_signal(feats=['acoustic', 'wordonsets'],
             else:
                 x_.append(wordlevels[k][:, wl_feats_id[f]])
         X.append(np.vstack(x_).T)
-    # normalise feature to unit variance (so we do not remove the mean here...)
-    var = np.var(np.vstack(X), 0)
-    for x in X:
-        if normalise=='story':
-            x /= np.sqrt(np.var(x, 0)) # per story
-        elif normalise=='all':
-            x /= np.sqrt(var) # across all stories
+    if normalise is not None:
+        # normalise feature to unit variance (so we do not remove the mean here...)
+        var = np.var(np.vstack(X), 0)
+        for x in X:
+            if normalise=='story':
+                x /= np.sqrt(np.var(x, 0)) # per story
+            elif normalise=='all':
+                x /= np.sqrt(var) # across all stories
     if verbose: print(f"Done. X shape: {X[0].shape}")
     return X
 
