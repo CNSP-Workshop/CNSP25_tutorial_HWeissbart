@@ -6,3 +6,4 @@ ipywidgets
 ipympl
 natmeeg
 h5py
+mne
