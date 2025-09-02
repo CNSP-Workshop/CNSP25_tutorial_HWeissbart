@@ -2,8 +2,6 @@
 
 This repository contains resources and instructions to be used for the tutorial of the CNSP 2025 workshop presented by H. Weissbart (on the 2nd of September at 6.30pm IST).
 
-> ⚠️ Tutorial files **TBC** ... in construction
-
 ## Objectives
 
 This tutorial presents advanced methodologies to extend **Temporal Response Function (TRF)** analysis beyond
