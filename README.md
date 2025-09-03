@@ -1,3 +1,5 @@
+_This repository was forked from Hugo Weissbart's GitHub at the start of his tutorial presentation at CNSP 2025._
+
 # Bridging Complexity in Neural Dynamics
 
 This repository contains resources and instructions to be used for the tutorial of the CNSP 2025 workshop presented by H. Weissbart (on the 2nd of September at 6.30pm IST).
